@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/htmls/AI-ESG_Syllabus_Overview.html"
+    }
+  ]
+}
