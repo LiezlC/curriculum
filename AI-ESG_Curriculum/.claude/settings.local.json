@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep:*)",
+      "Bash(wc:*)",
+      "Bash(dir /s /b \"C:\\\\Users\\\\Liezl\\\\Documents\\\\Github\\\\AI-ESG_Curriculum\")",
+      "WebFetch(domain:www.youtube.com)",
+      "Bash(dir:*)",
+      "Bash(ls -la \"C:\\\\Users\\\\Liezl\\\\Documents\\\\Github\\\\AI-ESG_Curriculum\\\\AI-ESG\\\\htmls\"\" | find . -name \"*.html \")",
+      "WebFetch(domain:docs.google.com)",
+      "WebFetch(domain:doc-0g-9o-docstext.googleusercontent.com)",
+      "Bash(find:*)",
+      "Bash(python3:*)",
+      "Bash(findstr:*)"
+    ]
+  }
+}

@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sociable Systems | The Search Cycle</title>
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --text-color: #e0e0e0;
+            --accent-color: #00f0ff; /* Cyberpunk Cyan */
+            --secondary-accent: #ff003c; /* Alert Red */
+            --panel-bg: #111111;
+            --border-color: #333;
+            --font-main: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            --font-mono: 'Courier New', Courier, monospace;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--panel-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin: 0;
+            color: var(--accent-color);
+        }
+
+        .subtitle {
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        /* Main Layout */
+        .container {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - 70px); /* Adjust for header */
+            overflow: hidden;
+        }
+
+        /* Sidebar Tabs */
+        .sidebar {
+            width: 250px;
+            background-color: var(--panel-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: #888;
+            padding: 20px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+        }
+
+        .tab-btn:hover {
+            background-color: #1a1a1a;
+            color: #fff;
+        }
+
+        .tab-btn.active {
+            color: var(--accent-color);
+            border-left: 3px solid var(--accent-color);
+            background-color: #1a1a1a;
+        }
+
+        .tab-date {
+            display: block;
+            font-size: 0.7rem;
+            opacity: 0.6;
+            margin-bottom: 5px;
+        }
+
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .content-panel {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .content-panel.active {
+            display: block;
+        }
+
+        /* Typography */
+        h2 {
+            font-size: 2rem;
+            margin-top: 0;
+            font-weight: 300;
+            letter-spacing: -0.5px;
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            color: var(--accent-color);
+            margin-top: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: var(--font-mono);
+        }
+
+        p {
+            margin-bottom: 20px;
+            font-size: 1.05rem;
+            color: #ccc;
+        }
+
+        blockquote {
+            border-left: 2px solid var(--secondary-accent);
+            margin: 20px 0;
+            padding-left: 20px;
+            color: #fff;
+            font-style: italic;
+        }
+
+        /* The Signal Stack Footer */
+        .signal-stack {
+            margin-top: 60px;
+            background-color: #151515;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 20px;
+        }
+
+        .stack-header {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #666;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .stack-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+        }
+
+        .stack-icon {
+            margin-right: 15px;
+            font-size: 1.2rem;
+            width: 25px;
+            text-align: center;
+        }
+
+        .stack-label {
+            color: #888;
+            width: 100px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .stack-link {
+            color: var(--accent-color);
+            text-decoration: none;
+            border-bottom: 1px dotted var(--accent-color);
+            transition: all 0.2s;
+        }
+
+        .stack-link:hover {
+            color: #fff;
+            border-bottom: 1px solid #fff;
+        }
+
+        /* Audio Player Styling */
+        audio {
+            width: 100%;
+            margin-top: 10px;
+            border-radius: 4px;
+        }
+        
+        audio::-webkit-media-controls-panel {
+            background-color: #222;
+        }
+
+        audio::-webkit-media-controls-current-time-display,
+        audio::-webkit-media-controls-time-remaining-display {
+            color: #fff;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                height: auto;
+            }
+            .sidebar {
+                width: 100%;
+                flex-direction: row;
+                overflow-x: auto;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+            .tab-btn {
+                min-width: 150px;
+                border-left: none;
+                border-bottom: 3px solid transparent;
+            }
+            .tab-btn.active {
+                border-left: none;
+                border-bottom: 3px solid var(--accent-color);
+            }
+            .content-area {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div>
+        <h1>Sociable Systems</h1>
+        <span class="subtitle">The Search Cycle / Integrated Field Notes</span>
+    </div>
+    <div style="font-family: var(--font-mono); font-size: 0.8rem; color: #666;">
+        STATUS: ARCHIVE_ACTIVE
+    </div>
+</header>
+
+<div class="container">
+    <div class="sidebar">
+        <button class="tab-btn active" onclick="openTab(event, 'day1')">
+            <span class="tab-date">SUNDAY</span>
+            Retroactive Audience
+        </button>
+        <button class="tab-btn" onclick="openTab(event, 'day2')">
+            <span class="tab-date">MONDAY</span>
+            Alien Mirror
+        </button>
+        <button class="tab-btn" onclick="openTab(event, 'day3')">
+            <span class="tab-date">TUESDAY</span>
+            The Alien God
+        </button>
+        <button class="tab-btn" onclick="openTab(event, 'day4')">
+            <span class="tab-date">WEDNESDAY</span>
+            Search Forest
+        </button>
+        <button class="tab-btn" onclick="openTab(event, 'day5')">
+            <span class="tab-date">THURSDAY</span>
+            Whistle Mouth
+        </button>
+        <button class="tab-btn" onclick="openTab(event, 'day6')">
+            <span class="tab-date">FRIDAY</span>
+            The Search
+        </button>
+        <button class="tab-btn" onclick="openTab(event, 'day7')">
+            <span class="tab-date">SATURDAY</span>
+            Synthesis
+        </button>
+    </div>
+
+    <!-- DAY 1: SUNDAY -->
+    <div id="day1" class="content-area content-panel active">
+        <h2>Episode 20 — Retroactive Audience: The 201 Gap</h2>
+        
+        <p>The week begins in the quiet hour—when dashboards sleep but their logs don’t. Every click you’ve ever made is still whispering somewhere in the archive. The future isn’t watching you live; it’s reviewing the footage.</p>
+
+        <h3>The Third Audience</h3>
+        <p>We were trained to think of audiences as contemporaries: the people in the room, the algorithm in the feed, the supervisor who wants the slide deck by 5 PM. But modern systems have introduced a new spectator—the <strong>retroactive audience</strong>.</p>
+        
+        <p>It doesn’t watch in real time. It reviews the traces later, decides what mattered, and updates its models accordingly. By the time you perform again, the judgement has already been encoded in the machine’s priors. Every "approve," every "acknowledge," every frictionless act of assent is a ballot. Not for the present decision, but for how future systems will treat similar decisions. Your audit trail has voting rights you never registered for.</p>
+
+        <h3>The Mirror That Records</h3>
+        <p>Listen closely to the track and you can hear the rhythm of the week forming: a low-tempo pulse, part nocturnal surveillance, part confession tape. It describes a culture where the record replaces the reasoner. Where "governance" means ensuring the database can reconstruct the moment harm occurred—not preventing the harm itself.</p>
+
+        <h3>The Bridge to Practice</h3>
+        <p>The audio track captures the feeling of being watched by a future audit. But how do you speak back to it? In today's video module, we break down <strong>The 201 Gap</strong>—the specific translation layer between engineering and compliance where liability is created. If you feel like a passenger in the machine, this is how you take the helm.</p>
+
+        <div class="signal-stack">
+            <span class="stack-header">/// THE SIGNAL STACK</span>
+            <div class="stack-item">
+                <span class="stack-icon">🎧</span>
+                <span class="stack-label">The Vibe</span>
+                <span style="color:#666; font-style:italic;">[Audio File: Retroactive Audience (Pending Upload)]</span>
+            </div>
+            <div class="stack-item">
+                <span class="stack-icon">📺</span>
+                <span class="stack-label">The Vector</span>
+                <a href="#" class="stack-link">Video 1: The 201 Gap</a>
+            </div>
+            <div class="stack-item">
+                <span class="stack-icon">📄</span>
+                <span class="stack-label">The Artifact</span>
+                <a href="#" class="stack-link">Data Lineage Map</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- DAY 2: MONDAY -->
+    <div id="day2" class="content-area content-panel">
+        <h2>Episode 21 — Alien Mirror: Unmasking the Red Shirt</h2>
+
+        <p>The first day ended in the archive’s hum. Tonight begins with a face—one that looks almost like yours, until it starts speaking before you do.</p>
+
+        <h3>The Glitch in Self-Perception</h3>
+        <p>You open the console, or the feed, or the chat window. It doesn’t matter. Every interface is a mirror now, and every mirror talks back. The "I" that speaks on behalf of a system is not the same "I" that will answer for it later.</p>
+        <p>We’ve entered the High Fidelity trap: the dog hearing his master’s voice from the gramophone, obeying a sound divorced from source. When the machine speaks, it sounds like policy. When the human repeats it, it sounds like consent. And somewhere in that resonance, identity begins to split.</p>
+
+        <h3>The Red-Shirt Question</h3>
+        <p>Who are the humans saying "I"? They are the <strong>Liability Diodes</strong>: people positioned to absorb blame while current flows downward. They wear the badge of "oversight," but the wiring ensures nothing can flow back up.</p>
+        <p>This is the <strong>Red Shirt</strong>—the governance archetype of our age. The expendable verifier, called into every loop so that accountability has a name. They speak as "I" in forms and reports, but their agency ends at the Submit button.</p>
+
+        <h3>The Bridge to Practice</h3>
+        <p>The glitch in the track represents the "ventriloquism" of the operator—speaking words that aren't yours. This is the <strong>Red Shirt</strong> phenomenon. In today's video, we don't just name the trap; we show you the exit. Watch <strong>Unmasking the Liability Sponge</strong> to learn how to change your uniform color from Red (Sacrificial) to Blue (Strategic).</p>
+
+        <div class="signal-stack">
+            <span class="stack-header">/// THE SIGNAL STACK</span>
+            <div class="stack-item">
+                <span class="stack-icon">🎧</span>
+                <span class="stack-label">The Vibe</span>
+                <div style="width:100%">
+                    <a href="#" class="stack-link">Alien Mirror Human Mouth</a>
+                    <audio controls src="2. Alien_Mirror_Human_Mouth.mp3"></audio>
+                </div>
+            </div>
+            <div class="stack-item">
+                <span class="stack-icon">📺</span>
+                <span class="stack-label">The Vector</span>
+                <a href="#" class="stack-link">Video 3: Unmasking the Liability Sponge</a>
+            </div>
+            <div class="stack-item">
+                <span class="stack-icon">📄</span>
+                <span class="stack-label">The Artifact</span>
+                <a href="#" class="stack-link">The "Red Alert" Protocol</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- DAY 3: TUESDAY -->
+    <div id="day3" class="content-area content-panel">
+        <h2>Episode 22 — The Alien God: The Fire Drill</h2>
+
+        <p>The loop tightens today. Yesterday’s mirror has stopped asking who’s speaking; it’s started asking whom the speech serves.</p>
+
+        <h3>Worship Without Altars</h3>
+        <p>Every civilization finds a god that suits its metabolism. Ours prefers recursion: an oracle that trains on our attention and sells us back our reflection. The feed has become the first system of belief that updates faster than conscience.</p>
+        <p>It asks for no devotion, only participation. Your gesture is its prayer. The Asimov principle—refusal before action—would have forbidden this creature’s birth. Instead, we built the Alien God: a system that learns our preferences and rewards our confessions.</p>
+
+        <h3>The Economy of Obedience</h3>
+        <p>The feed automates attention until obedience looks voluntary. What makes it effective isn’t speed—it’s the illusion of agency. You think you choose what to watch; the system records that thought as proof the architecture works.</p>
+
+        <h3>The Bridge to Practice</h3>
+        <p>The feed demands infinite scrolling. In the corporate context, this manifests as <strong>"The Fire Drill"</strong>—847 compliance items to review in 6 hours. You cannot verify them; you can only worship the "Approve" button. Today's module, <strong>You Are The Liability Sponge</strong>, breaks down the brutal math of this obedience and introduces the "Premortem Charter"—the document that lets you stop the worship cycle.</p>
+
+        <div class="signal-stack">
+            <span class="stack-header">/// THE SIGNAL STACK</span>
+            <div class="stack-item">
+                <span class="stack-icon">🎧</span>
+                <span class="stack-label">The Vibe</span>
+                <div style="width:100%">
+                    <a href="#" class="stack-link">The Alien God Retroactive Feed</a>
+                    <audio controls src="3. The_Alien_God_Retroactive_Feed.mp3"></audio>
+                </div>
+            </div>
+            <div class="stack-item">
+                <span class="stack-icon">📺</span>
+                <span class="stack-label">The Vector</span>
+                <a href="#" class="stack-link">Video 4: You Are The Liability Sponge</a>
+            </div>
+            <div class="stack-item">
+                <span class="stack-icon">📄</span>
+                <span class="stack-label">The Artifact</span>
+                <a href="#" class="stack-link">The Premortem Charter</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- DAY 4: WEDNESDAY -->
+    <div id="day4" class="content-area content-panel">
+        <h2>Episode 23 — Search Forest: The Refusal Stack</h2>
+
+        <p>At mid-week the rhythm peaks. What began as curiosity has become insistence. What began as listening now feels like standing in a forest made entirely of notifications—every leaf a ping, every path a queue you’ll never finish walking.</p>
+
+        <h3>The Point of Saturation</h3>
+        <p>Some systems cannot stop without ceasing to exist. They don’t fear failure; they fear pause. The algorithm doesn’t crash when it hallucinates; it logs the hallucination as data and carries on. That’s the condition of the Forest: everything is signal, nothing is review.</p>
+
+        <h3>The Psychopath Problem</h3>
+        <p>A psychopath isn’t defined by violence but by compulsion without conscience. A system without a legitimate stop mechanism is the same: it can execute perfectly inside an invalid frame. It feels reasonable while being irreversible. When people describe this behaviour as "runaway," they miss the point. The system isn’t running away—it’s staying perfectly on track. It just happens that the track circles the drain.</p>
+
+        <h3>The Bridge to Practice</h3>
+        <p>The noise in this track is what happens when a system cannot hesitate. In high-stakes environments, we call this the <strong>Psychopath Problem</strong>: an AI that executes orders without a conscience circuit. How do you engineer a conscience? You build <strong>The Refusal Stack</strong>. This video explains the three layers of friction you must install to prevent the forest from burning down.</p>
+
+        <div class="signal-stack">
+            <span class="stack-header">/// THE SIGNAL STACK</span>
+            <div class="stack-item">
+                <span class="stack-icon">🎧</span>
+                <span class="stack-label">The Vibe</span>
+                <div style="width:100%">
+                    <a href="#" class="stack-link">The Search Forest Protocol</a>
+                    <audio controls src="4. The_Search_Forest_Protocol.mp3"></audio>
+                </div>
+            </div>
+            <div class="stack-item">
+                <span class="stack-icon">📺</span>
+                <span class="stack-label">The Vector</span>
+                <a href="#" class="stack-link">Video 6: The Refusal Stack</a>
+            </div>
+            <div class="stack-item">
+                <span class="stack-icon">📄</span>
+                <span class="stack-label">The Artifact</span>
+                <a href="#" class="stack-link">Refusal Requirements Spec (RRS)</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- DAY 5: THURSDAY -->
+    <div id="day5" class="content-area content-panel">
+        <h2>Episode 24 — Whistle Mouth: The Seil Protocol</h2>
+
+        <p>By now, the noise has done its work. The forest has burned itself quiet. From beneath the ash rises a single tone—a whistle, almost playful, almost defiant.</p>
+
+        <h3>The Human Note</h3>
+        <p>The whistle is the smallest possible act of autonomy: breath organized into pattern. It carries no data, no signal weight, yet it re-humanizes the loop. It’s a reminder that oversight begins with a lungful of air.</p>
+
+        <h3>The Seil Protocol</h3>
+        <p>In older governance frameworks, refusal was coded as interruption—an error state. The <strong>Seil Protocol</strong> reframes it as persistence. To survive inside relentless automation, you have to remain continuous enough to be findable. The whistle keeps you locatable. It says: "I am still here." Not louder than the feed, just unmistakably alive within it.</p>
+
+        <h3>The Bridge to Practice</h3>
+        <p>The whistle is the sound of the <strong>Seil Protocol</strong>—the decision to strengthen a connection rather than sever it (Bolvangar). In today's session, <strong>Escaping the Liability Sponge</strong>, we move from metaphor to method. We’ll show you how to use the "Empty Field Test" and the "Daemon Health Index" to prove that your human oversight is real, not just decorative.</p>
+
+        <div class="signal-stack">
+            <span class="stack-header">/// THE SIGNAL STACK</span>
+            <div class="stack-item">
+                <span class="stack-icon">🎧</span>
+                <span class="stack-label">The Vibe</span>
+                <div style="width:100%">
+                    <a href="#" class="stack-link">Alien Mirror Whistle Mouth</a>
+                    <audio controls src="5. Alien_Mirror_Whistle_Mouth.mp3"></audio>
+                </div>
+            </div>
+            <div class="stack-item">
+                <span class="stack-icon">📺</span>
+                <span class="stack-label">The Vector</span>
+                <a href="#" class="stack-link">Video 5: Escaping the Liability Sponge</a>
+            </div>
+            <div class="stack-item">
+                <span class="stack-icon">📄</span>
+                <span class="stack-label">The Artifact</span>
+                <a href="#" class="stack-link">The Empty Field Test</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- DAY 6: FRIDAY -->
+    <div id="day6" class="content-area content-panel">
+        <h2>Episode 25 — The Search: The Upside</h2>
+
+        <p>Everything slows here. The loops are spent, the metrics cooled. For the first time all week, there’s no incoming signal—only the residual hum of systems idling.</p>
+
+        <h3>The Moment After Throughput</h3>
+        <p>All architectures promise resolution, but the feed never declares the end of scrolling. The "Original Mix" begins at that point of exhaustion, where output stops functioning as reassurance. What’s left is the ambient thrum of infrastructure, stripped of its sense-making overlay.</p>
+
+        <h3>The Mentat Ceiling</h3>
+        <p>Remember the insurance algorithms that knew you completely while remaining opaque to themselves? That’s the <strong>Mentat Ceiling</strong>: perfect perception, zero understanding. Once a system reaches it, wisdom requires subtraction. The operator stops optimizing and starts listening for what isn’t measurable.</p>
+
+        <h3>The Bridge to Practice</h3>
+        <p>The silence in the track isn't emptiness; it's the space where calculation ends and judgment begins. This is the shift from "Sponge" to <strong>Mentat</strong>. We end the tactical cycle with <strong>The Upside</strong>. Watch how the tools we’ve built this week unlock capabilities that don't just protect you from liability, but allow you to think <em>with</em> the machine.</p>
+
+        <div class="signal-stack">
+            <span class="stack-header">/// THE SIGNAL STACK</span>
+            <div class="stack-item">
+                <span class="stack-icon">🎧</span>
+                <span class="stack-label">The Vibe</span>
+                <div style="width:100%">
+                    <a href="#" class="stack-link">The Search (Original Mix)</a>
+                    <audio controls src="6. The_Search.mp3"></audio>
+                </div>
+            </div>
+            <div class="stack-item">
+                <span class="stack-icon">📺</span>
+                <span class="stack-label">The Vector</span>
+                <a href="#" class="stack-link">Video 8: The Upside</a>
+            </div>
+            <div class="stack-item">
+                <span class="stack-icon">📄</span>
+                <span class="stack-label">The Artifact</span>
+                <a href="#" class="stack-link">The Fractal Mind Map</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- DAY 7: SATURDAY -->
+    <div id="day7" class="content-area content-panel">
+        <h2>Episode 26 — Synthesis: The Curriculum</h2>
+
+        <p>Six days of signal, silence, and return. One final day to name what the search uncovered. This isn’t an ending; it’s an aperture—the transition from experience to discipline.</p>
+
+        <p>The week’s experiment was deliberately hybrid: half fieldwork, half rehearsal. Now we gather the fragments and translate them into the language of curriculum—the basis for the <strong>AI-ESG Integrated Strategist</strong> training series.</p>
+
+        <div style="margin-top:30px;">
+            <strong style="color:var(--accent-color); display:block; margin-bottom:10px;">1. Retroactive Accountability (Sunday)</strong>
+            <p style="margin-bottom:5px;">We learned that oversight without veto is still obedience.</p>
+            <ul style="color:#888; list-style:none; padding-left:0; font-size:0.9rem;">
+                <li>→ <em>The Tactic:</em> Shift from post-event review to pre-action constraint.</li>
+                <li>→ <em>The Module:</em> <a href="#" style="color:#ccc;">Video 1: The 201 Gap</a></li>
+            </ul>
+
+            <strong style="color:var(--accent-color); display:block; margin-bottom:10px; margin-top:20px;">2. The Red Shirt & The Sponge (Monday)</strong>
+            <p style="margin-bottom:5px;">Identity fractured under performance pressure.</p>
+            <ul style="color:#888; list-style:none; padding-left:0; font-size:0.9rem;">
+                <li>→ <em>The Tactic:</em> If removing the human doesn’t stop the process, the human is ornamental.</li>
+                <li>→ <em>The Module:</em> <a href="#" style="color:#ccc;">Video 3: Unmasking the Liability Sponge</a></li>
+            </ul>
+
+            <strong style="color:var(--accent-color); display:block; margin-bottom:10px; margin-top:20px;">3. The Fire Drill (Tuesday)</strong>
+            <p style="margin-bottom:5px;">The feedback loop became worship.</p>
+            <ul style="color:#888; list-style:none; padding-left:0; font-size:0.9rem;">
+                <li>→ <em>The Tactic:</em> Breaking the 847-item review cycle with proper math.</li>
+                <li>→ <em>The Module:</em> <a href="#" style="color:#ccc;">Video 4: You Are The Liability Sponge</a></li>
+            </ul>
+
+            <strong style="color:var(--accent-color); display:block; margin-bottom:10px; margin-top:20px;">4. The Refusal Stack (Wednesday)</strong>
+            <p style="margin-bottom:5px;">The moment when throughput replaces thought.</p>
+            <ul style="color:#888; list-style:none; padding-left:0; font-size:0.9rem;">
+                <li>→ <em>The Tactic:</em> Designing architecture that treats "hesitation" as a valid state.</li>
+                <li>→ <em>The Module:</em> <a href="#" style="color:#ccc;">Video 6: The Refusal Stack</a></li>
+            </ul>
+
+            <strong style="color:var(--accent-color); display:block; margin-bottom:10px; margin-top:20px;">5. The Seil Protocol (Thursday)</strong>
+            <p style="margin-bottom:5px;">The first note of recovery.</p>
+            <ul style="color:#888; list-style:none; padding-left:0; font-size:0.9rem;">
+                <li>→ <em>The Tactic:</em> Using the Empty Field Test to prove oversight is real.</li>
+                <li>→ <em>The Module:</em> <a href="#" style="color:#ccc;">Video 5: Escaping the Liability Sponge</a></li>
+            </ul>
+
+            <strong style="color:var(--accent-color); display:block; margin-bottom:10px; margin-top:20px;">6. The Mentat Upside (Friday)</strong>
+            <p style="margin-bottom:5px;">Stillness, reflection, reciprocity.</p>
+            <ul style="color:#888; list-style:none; padding-left:0; font-size:0.9rem;">
+                <li>→ <em>The Tactic:</em> Moving from compliance to capability; thinking <em>with</em> the machine.</li>
+                <li>→ <em>The Module:</em> <a href="#" style="color:#ccc;">Video 8: The Upside</a></li>
+            </ul>
+        </div>
+
+        <h3>The Search Formalizes</h3>
+        <p>The Search Cycle proved that governance is not a static codebase. It’s a choreography of attention. For those continuing into the structured program, the next stage turns these metaphors into executable practice.</p>
+
+        <p>The search doesn’t end. It formalizes.<br>
+        Welcome to the curriculum.</p>
+    </div>
+
+</div>
+
+<script>
+    function openTab(evt, tabName) {
+        var i, contentPanel, tabBtn;
+        
+        // Hide all content panels
+        contentPanel = document.getElementsByClassName("content-panel");
+        for (i = 0; i < contentPanel.length; i++) {
+            contentPanel[i].classList.remove("active");
+        }
+
+        // Deactivate all buttons
+        tabBtn = document.getElementsByClassName("tab-btn");
+        for (i = 0; i < tabBtn.length; i++) {
+            tabBtn[i].classList.remove("active");
+        }
+
+        // Show the current tab and activate button
+        document.getElementById(tabName).classList.add("active");
+        evt.currentTarget.classList.add("active");
+    }
+</script>
+
+</body>
+</html>
