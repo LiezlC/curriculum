@@ -26,7 +26,7 @@ and how to protect yourself before the audit.
 [SUBTEXT] 4 videos • Self-paced • Includes downloadable toolkit
 ```
 
-**Visual:** Professional but slightly ominous. Could use one of your existing module graphics (AI-ESG_ConstitutionalBase.png or similar).
+**Visual:** Professional but slightly ominous. Could use one of your existing module graphics (AI-ESG_ConstitutionalBase.webp or similar).
 
 ---
 

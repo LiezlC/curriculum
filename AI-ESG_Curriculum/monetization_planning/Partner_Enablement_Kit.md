@@ -9,7 +9,7 @@
 "I’ve productized the entire research into a delivery-ready curriculum. I have the slides, the scripts, and the software (GrieVoice). I want to stay in the lab building product. I want you to be the face on stage. You sell the workshop to your network, you deliver it (using my deck), and we split the revenue. Plus, it drives leads for the GrieVoice rollout."
 
 ## 2. The Assets (What she gets)
-*   **The "Speaker Deck":** A sanitized version of `AI-ESG_Deployment.png` and related slides (No watermarks, ready for her logo co-branding).
+*   **The "Speaker Deck":** A sanitized version of `AI-ESG_Deployment.webp` and related slides (No watermarks, ready for her logo co-branding).
 *   **The "Script":** The `vidscripts` files converted to PDF Speaker Notes.
 *   **The "One-Pager":** A sales sheet she can forward to potential clients.
 
